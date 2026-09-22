@@ -9,11 +9,10 @@
 
 | Файл | Назначение |
 | --- | --- |
-| `src/MeshTypes.h`, `src/MeshTypes.cpp` | вспомогательные типы `Node` и `FiniteElement`, вывод в поток |
+| `src/MeshTypes.h` | вспомогательные типы `Node` и `FiniteElement`, вывод в поток |
 | `src/MeshExceptions.h` | иерархия исключений загрузчика |
 | `src/Mesh.h`, `src/Mesh.cpp` | класс сетки `Mesh` и предикат `HasThreeNodes` |
-| `src/MeshLoader.h` | базовый класс загрузчика с чисто виртуальным методом `loadMesh` |
-| `src/AneuMeshLoader.h`, `src/AneuMeshLoader.cpp` | загрузчик формата `.aneu` |
+| `src/MeshLoader.h`, `src/MeshLoader.cpp` | базовый класс `MeshLoader` и загрузчик формата `.aneu` |
 | `src/main.cpp` | консольная программа, имя файла передаётся в аргументах |
 | `meshes/MeshExample.aneu` | пример сетки (85 узлов, 150 тетраэдров, 166 треугольников) |
 

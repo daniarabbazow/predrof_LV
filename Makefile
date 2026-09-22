@@ -2,7 +2,7 @@ CXX = g++
 CXXFLAGS = -std=c++11 -Wall -Wextra -O2
 
 TARGET = mesh_loader
-SOURCES = src/main.cpp src/Mesh.cpp src/MeshTypes.cpp src/AneuMeshLoader.cpp
+SOURCES = src/main.cpp src/Mesh.cpp src/MeshLoader.cpp
 OBJECTS = $(SOURCES:.cpp=.o)
 
 all: $(TARGET)
