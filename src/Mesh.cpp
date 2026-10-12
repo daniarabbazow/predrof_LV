@@ -7,6 +7,9 @@
 
 // ---------------------------------------------------------------- предикат
 
+// operator() предиката: подходит ли элемент.
+// Как работает: по очереди ищет каждый из трёх номеров в списке узлов
+// элемента (std::find). Если нашлись все три - элемент подходит.
 bool HasThreeNodes::operator()(const FiniteElement& p_element) const
 {
     const std::vector<int>& nodes = p_element.nodeIds;
@@ -19,9 +22,15 @@ bool HasThreeNodes::operator()(const FiniteElement& p_element) const
 
 // ------------------------------------------------------------ конструкторы
 
+// Конструктор пустой сетки.
+// Как работает: делать ничего не нужно - все три списка (вектора)
+// сами создаются пустыми.
 Mesh::Mesh()
 {}
 
+// Конструктор сетки из готовых списков.
+// Как работает: копирует переданные списки в поля сетки
+// через список инициализации.
 Mesh::Mesh(const std::vector<Node>& p_nodes,
            const std::vector<FiniteElement>& p_elements,
            const std::vector<FiniteElement>& p_boundaryElements)
@@ -32,21 +41,31 @@ Mesh::Mesh(const std::vector<Node>& p_nodes,
 
 // ------------------------------------------------------- доступ к данным
 
+// getNodes: все узлы сетки.
+// Как работает: возвращает ссылку на поле m_nodes, без копирования.
 const std::vector<Node>& Mesh::getNodes() const
 {
     return m_nodes;
 }
 
+// getElements: все тетраэдры.
+// Как работает: возвращает ссылку на поле m_elements, без копирования.
 const std::vector<FiniteElement>& Mesh::getElements() const
 {
     return m_elements;
 }
 
+// getBoundaryElements: все граничные треугольники.
+// Как работает: возвращает ссылку на поле m_boundaryElements, без копирования.
 const std::vector<FiniteElement>& Mesh::getBoundaryElements() const
 {
     return m_boundaryElements;
 }
 
+// getNode: узел по номеру.
+// Как работает: сначала проверяет, что номер есть в сетке (от 1 до числа
+// узлов), иначе бросает исключение. Потом сразу берёт узел из вектора
+// по индексу - искать его не нужно.
 const Node& Mesh::getNode(int p_id) const
 {
     // Узлы хранятся подряд, поэтому узел с ID = n лежит по индексу n - 1.
@@ -63,6 +82,11 @@ const Node& Mesh::getNode(int p_id) const
 
 // ------------------------------------------------------- поиск элементов
 
+// findElementsByThreeNodes: тетраэдры, в которых есть три заданных узла.
+// Как работает: создаёт предикат HasThreeNodes с этими номерами и в цикле
+// вызывает std::find_if. Каждый вызов находит следующий подходящий тетраэдр,
+// начиная с места, где остановился прошлый. Номер найденного добавляется
+// в результат. Когда find_if дошёл до конца списка - всё найдено.
 std::vector<int> Mesh::findElementsByThreeNodes(int p_id1, int p_id2, int p_id3) const
 {
     std::vector<int> result;
@@ -81,6 +105,10 @@ std::vector<int> Mesh::findElementsByThreeNodes(int p_id1, int p_id2, int p_id3)
     return result;
 }
 
+// findElementsByEdge: тетраэдры с общим ребром.
+// Как работает: проходит по всем тетраэдрам (std::for_each) и берёт те,
+// в которых есть оба узла ребра. В тетраэдре любые две вершины соединены
+// ребром, поэтому такой проверки достаточно.
 std::vector<int> Mesh::findElementsByEdge(int p_id1, int p_id2) const
 {
     std::vector<int> result;
@@ -100,6 +128,9 @@ std::vector<int> Mesh::findElementsByEdge(int p_id1, int p_id2) const
     return result;
 }
 
+// getElementIdsByRegion: тетраэдры заданной области.
+// Как работает: проходит по всем тетраэдрам и собирает номера тех,
+// у которых номер области совпадает с заданным.
 std::vector<int> Mesh::getElementIdsByRegion(int p_regionId) const
 {
     std::vector<int> result;
@@ -114,6 +145,9 @@ std::vector<int> Mesh::getElementIdsByRegion(int p_regionId) const
     return result;
 }
 
+// getBoundaryElementIds: граничные треугольники заданной границы.
+// Как работает: так же, как getElementIdsByRegion, только проходит
+// по списку граничных элементов.
 std::vector<int> Mesh::getBoundaryElementIds(int p_boundaryId) const
 {
     std::vector<int> result;
@@ -128,6 +162,10 @@ std::vector<int> Mesh::getBoundaryElementIds(int p_boundaryId) const
     return result;
 }
 
+// getBoundaryNodeIds: узлы на заданной границе.
+// Как работает: проходит по треугольникам этой границы и складывает все их
+// узлы в множество std::set - оно само убирает повторы и сортирует номера.
+// В конце множество переписывается в вектор.
 std::vector<int> Mesh::getBoundaryNodeIds(int p_boundaryId) const
 {
     // Один узел принадлежит нескольким граничным КЭ,
@@ -146,6 +184,10 @@ std::vector<int> Mesh::getBoundaryNodeIds(int p_boundaryId) const
 
 // ------------------------------------------------------- соседние узлы
 
+// makeEdges: список рёбер элемента.
+// Как работает: двумя вложенными циклами перебирает все пары вершин (i, j),
+// где i < j, - каждая такая пара и есть ребро. Условие i < j нужно, чтобы
+// не взять одно ребро дважды, как (0,1) и (1,0), и не взять пару (0,0).
 std::vector<std::pair<int, int> > Mesh::makeEdges(int p_vertexCount)
 {
     // Все вершины КЭ соединены рёбрами попарно:
@@ -159,6 +201,14 @@ std::vector<std::pair<int, int> > Mesh::makeEdges(int p_vertexCount)
     return edges;
 }
 
+// getNodeNeighbours: соседи каждого узла.
+// Как работает: для каждого узла заводится пустое множество соседей.
+// Потом перебираются все элементы и все их рёбра: для ребра (a, b) узел b
+// записывается в соседи a, а a - в соседи b. Одно ребро встречается в
+// нескольких элементах, но множества сами убирают повторы.
+// В конце множества переводятся в векторы.
+// Учитываются рёбра между вершинами элементов, поэтому метод рассчитан на сетку
+// до splitEdges: у узлов в серединах рёбер список соседей останется пустым.
 std::vector<std::vector<int> > Mesh::getNodeNeighbours() const
 {
     // Для каждого узла собираем множество соседей (без повторов)
@@ -206,6 +256,15 @@ std::vector<std::vector<int> > Mesh::getNodeNeighbours() const
 
 // --------------------------------------------- вставка узлов в середины рёбер
 
+// addMiddleNodes: вставка узлов в середины рёбер для одного списка элементов.
+// Как работает: для каждого элемента и каждого его ребра:
+//   1) делает ключ ребра - пару номеров его узлов, меньший номер первым;
+//   2) ищет этот ключ в словаре p_createdNodes;
+//   3) если не нашёл - узла на этом ребре ещё нет: создаёт узел посередине
+//      (каждая координата - полусумма координат концов ребра) и запоминает
+//      его в словаре;
+//   4) номер узла (нового или созданного раньше) дописывает в конец
+//      списка узлов элемента.
 void Mesh::addMiddleNodes(std::vector<FiniteElement>& p_elements,
                           int p_vertexCount,
                           std::map<std::pair<int, int>, int>& p_createdNodes)
@@ -255,6 +314,11 @@ void Mesh::addMiddleNodes(std::vector<FiniteElement>& p_elements,
         });
 }
 
+// splitEdges: вставка узлов в середины рёбер всей сетки.
+// Как работает: заводит один общий словарь "ребро -> номер узла" и вызывает
+// addMiddleNodes сначала для тетраэдров, потом для треугольников.
+// Словарь общий, поэтому треугольник на поверхности получает тот же узел,
+// что и тетраэдр, которому принадлежит это ребро.
 void Mesh::splitEdges()
 {
     // Словарь "ребро -> ID созданного на нём узла" общий для объёмных
@@ -267,11 +331,17 @@ void Mesh::splitEdges()
 
 // ------------------------------------------------------------------- вывод
 
+// printNode: вывод узла в заданный поток.
+// Как работает: печатает узел через operator<< из MeshTypes.h
+// и добавляет перевод строки.
 void Mesh::printNode(std::ostream& p_out, const Node& p_node) const
 {
     p_out << p_node << std::endl;
 }
 
+// printElement: вывод элемента в заданный поток.
+// Как работает: печатает элемент через operator<< из MeshTypes.h
+// и добавляет перевод строки.
 void Mesh::printElement(std::ostream& p_out, const FiniteElement& p_element) const
 {
     p_out << p_element << std::endl;

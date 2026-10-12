@@ -3,6 +3,10 @@
 
 #include <sstream>
 
+// readHeader: чтение заголовка блока.
+// Как работает: читает два числа. Если прочитать не удалось или числа
+// не положительные, бросает FileFormatException с названием блока,
+// чтобы по сообщению было понятно, в каком месте файла ошибка.
 void AneuMeshLoader::readHeader(std::ifstream& p_file, int& o_count, int& o_size,
                                 const std::string& p_blockName)
 {
@@ -15,6 +19,11 @@ void AneuMeshLoader::readHeader(std::ifstream& p_file, int& o_count, int& o_size
         throw FileFormatException("wrong header of block \"" + p_blockName + "\"");
 }
 
+// readElements: чтение блока элементов.
+// Как работает: для каждой из p_count строк читает номер области и
+// p_nodesInElement номеров узлов. Каждый номер узла проверяется: он должен быть
+// от 1 до количества узлов в сетке. Номер самого элемента - это номер строки
+// в блоке (первая строка - элемент 1). Если что-то не прочиталось - исключение.
 std::vector<FiniteElement> AneuMeshLoader::readElements(std::ifstream& p_file,
                                                         int p_count,
                                                         int p_nodesInElement,
@@ -60,6 +69,14 @@ std::vector<FiniteElement> AneuMeshLoader::readElements(std::ifstream& p_file,
     return elements;
 }
 
+// loadMesh: загрузка сетки из файла .aneu.
+// Как работает:
+//   1) открывает файл, если не получилось - бросает FileOpenException;
+//   2) читает заголовок и все узлы (номер узла - это номер его строки, с 1);
+//   3) читает заголовок и блок тетраэдров (в каждом должно быть 4 узла);
+//   4) читает заголовок и блок граничных треугольников (в каждом 3 узла);
+//   5) собирает из прочитанного объект Mesh и возвращает его.
+// На каждом шаге проверяет, что данные прочитались, иначе - FileFormatException.
 Mesh AneuMeshLoader::loadMesh(const std::string& p_fileName)
 {
     std::ifstream file(p_fileName.c_str());

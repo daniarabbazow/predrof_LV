@@ -2,10 +2,14 @@
 
 Здесь объясняется каждая конструкция C++, которая встречается в коде лабораторной.
 Идём по файлам в том порядке, в котором их удобно читать. Каждая конструкция
-объясняется там, где встречается впервые. Ссылки вида `src/Mesh.cpp:75`
+объясняется там, где встречается впервые. Ссылки вида `src/Mesh.cpp:99`
 означают «файл, номер строки».
 
 В конце (раздел 9) есть шпаргалка: конструкция → где в коде → в какой лекции разбиралась.
+
+Что делает каждый метод и зачем он нужен, написано прямо в коде — в комментарии перед ним:
+в `.h` — «Что это» и «Зачем», в `.cpp` — «Как работает». Этот файл объясняет другое:
+синтаксис, то есть что означает каждая запись языка C++.
 
 > В VS Code этот файл удобно читать в режиме предпросмотра: `Ctrl+Shift+V`.
 > Переход к определению любого имени в коде: `F12` или `Ctrl+клик`.
@@ -107,7 +111,7 @@ Node(int p_id, double p_x, double p_y, double p_z, bool p_isVertex = true)
 {}
 ```
 
-`src/MeshTypes.h:22`
+`src/MeshTypes.h:29`
 
 **Конструктор** — метод с тем же именем, что у типа, и без возвращаемого типа.
 Он вызывается автоматически при создании объекта: `Node n(1, 0.0, 0.5, 1.0);`
@@ -137,7 +141,7 @@ Node()
 {}
 ```
 
-`src/MeshTypes.h:18`
+`src/MeshTypes.h:21`
 
 Конструктор без параметров. Он позволяет написать просто `Node n;`.
 
@@ -161,7 +165,7 @@ bool p_isVertex = true
 std::vector<int> nodeIds;
 ```
 
-`src/MeshTypes.h:32`
+`src/MeshTypes.h:39`
 
 `std::vector` — динамический массив из стандартной библиотеки, он сам увеличивается при
 добавлении элементов. В угловых скобках — тип элементов: `vector` — это **шаблон класса**,
@@ -187,7 +191,7 @@ std::vector<int> nodeIds;
 FiniteElement(int p_id, int p_regionId, const std::vector<int>& p_nodeIds)
 ```
 
-`src/MeshTypes.h:38`
+`src/MeshTypes.h:51`
 
 - `&` — **ссылка**: функция работает с оригиналом, а не с копией. Копировать вектор дорого.
 - `const` — обещание, что функция оригинал не изменит.
@@ -210,7 +214,7 @@ inline std::ostream& operator<<(std::ostream& p_out, const Node& p_node)
 }
 ```
 
-`src/MeshTypes.h:45`
+`src/MeshTypes.h:63`
 
 Здесь мы учим оператор `<<` выводить наш тип, чтобы можно было писать `std::cout << node;`.
 Компилятор превращает такую запись в вызов функции `operator<<(std::cout, node)`.
@@ -241,7 +245,7 @@ inline std::ostream& operator<<(std::ostream& p_out, const Node& p_node)
 p_out << std::fixed << std::setprecision(6) << std::setw(10) << p_node.x;
 ```
 
-`src/MeshTypes.h:47`
+`src/MeshTypes.h:65`
 
 | Манипулятор | Что делает |
 | --- | --- |
@@ -258,7 +262,7 @@ p_out << std::fixed << std::setprecision(6) << std::setw(10) << p_node.x;
 << (p_node.isVertex ? "vertex" : "inner");
 ```
 
-`src/MeshTypes.h:52`
+`src/MeshTypes.h:70`
 
 Читается как «условие ? значение, если да : значение, если нет». Короткая замена `if/else`
 внутри выражения.
@@ -272,7 +276,7 @@ p_out << std::fixed << std::setprecision(6) << std::setw(10) << p_node.x;
 for (size_t i = 0; i < p_element.nodeIds.size(); ++i)
 ```
 
-`src/MeshTypes.h:63`
+`src/MeshTypes.h:85`
 
 `size()` возвращает беззнаковый тип `size_t`. Если взять счётчик `int i`, компилятор
 предупредит о сравнении знакового числа с беззнаковым, поэтому счётчик тоже `size_t`.
@@ -332,7 +336,7 @@ explicit FileOpenException(const std::string& p_fileName)
 {}
 ```
 
-`src/MeshExceptions.h:20`
+`src/MeshExceptions.h:26`
 
 Объект наследника содержит внутри себя «родительскую часть», и её тоже надо сконструировать.
 Конструктор родителя вызывается в списке инициализации, как будто это поле.
@@ -357,7 +361,7 @@ explicit FileOpenException(const std::string& p_fileName)
 `+` склеивает строки, если хотя бы одна из частей — `std::string`. Два строковых литерала
 сложить нельзя: `"a" + "b"` — ошибка, потому что литералы — это указатели на символы.
 
-`\"` — кавычка внутри строки (`src/MeshLoader.cpp:12`). Обратная косая черта говорит, что эта
+`\"` — кавычка внутри строки (`src/MeshLoader.cpp:16`). Обратная косая черта говорит, что эта
 кавычка — символ строки, а не её конец.
 
 ---
@@ -373,7 +377,7 @@ explicit FileOpenException(const std::string& p_fileName)
 (например, `main.cpp`) для вызова метода достаточно знать его объявление.
 
 Исключение — очень короткие методы, написанные прямо в классе, например конструктор
-`HasThreeNodes` (`src/Mesh.h:16`). Они автоматически становятся `inline`.
+`HasThreeNodes` (`src/Mesh.h:19`). Они автоматически становятся `inline`.
 
 ### 3.2. `public:` и `private:`
 
@@ -389,7 +393,7 @@ private:
 };
 ```
 
-`src/Mesh.h:32`, `src/Mesh.h:72`
+`src/Mesh.h:39`, `src/Mesh.h:122`
 
 Всё, что после `private:`, могут использовать только методы самого `Mesh`. Снаружи нельзя,
 например, удалить из `m_nodes` узел, на который ещё ссылаются элементы, и тем самым
@@ -434,7 +438,7 @@ private:
 const std::vector<Node>& getNodes() const;
 ```
 
-`src/Mesh.h:39`
+`src/Mesh.h:54`
 
 Последнее `const` означает: метод не меняет поля объекта. Если внутри такого метода
 попытаться изменить поле, будет ошибка компиляции.
@@ -461,7 +465,7 @@ const std::vector<Node>& getNodes() const;
 std::vector<std::vector<int> > getNodeNeighbours() const;
 ```
 
-`src/Mesh.h:63`
+`src/Mesh.h:103`
 
 Вектор, каждый элемент которого — вектор `int`. Похоже на двумерный массив, но строки
 могут быть разной длины: у каждого узла своё число соседей.
@@ -476,7 +480,7 @@ std::vector<std::pair<int, int> > makeEdges(int p_vertexCount);
 std::map<std::pair<int, int>, int>& p_createdNodes
 ```
 
-`src/Mesh.h:78`, `src/Mesh.h:85`
+`src/Mesh.h:133`, `src/Mesh.h:142`
 
 `std::pair<int, int>` — пара значений, поля называются `.first` и `.second`.
 Ребро удобно хранить как пару номеров его узлов.
@@ -493,7 +497,7 @@ std::map<std::pair<int, int>, int>& p_createdNodes
 static std::vector<std::pair<int, int> > makeEdges(int p_vertexCount);
 ```
 
-`src/Mesh.h:78`
+`src/Mesh.h:133`
 
 Статический метод не привязан к конкретному объекту: ему не передаётся `this`, и обращаться
 к полям `m_...` он не может. `makeEdges` и не нужно ничего знать о сетке — только количество
@@ -507,7 +511,7 @@ static const int VERTICES_IN_ELEMENT = 4;
 static const int VERTICES_IN_BOUNDARY_ELEMENT = 3;
 ```
 
-`src/Mesh.h:74`
+`src/Mesh.h:124`
 
 Константы класса: одна на весь класс (`static`), неизменяемая (`const`). Вместо «магической»
 цифры 4 в коде стоит понятное имя. Целочисленные `static const` можно инициализировать прямо
@@ -526,7 +530,7 @@ const std::vector<Node>& Mesh::getNodes() const
 }
 ```
 
-`src/Mesh.cpp:35`
+`src/Mesh.cpp:46`
 
 `Mesh::` перед именем говорит, что это метод класса `Mesh`, а не отдельная функция.
 Без него компилятор не понял бы, что такое `m_nodes`.
@@ -547,7 +551,7 @@ Mesh::Mesh(const std::vector<Node>& p_nodes, ...)
 {}
 ```
 
-`src/Mesh.cpp:22`
+`src/Mesh.cpp:28`
 
 В первом конструкторе делать нечего: поля-векторы сами создаются пустыми.
 Во втором поля копируются из параметров. Запятые в начале строк — просто стиль оформления,
@@ -559,7 +563,7 @@ Mesh::Mesh(const std::vector<Node>& p_nodes, ...)
 if (p_id < 1 || p_id > static_cast<int>(m_nodes.size()))
 ```
 
-`src/Mesh.cpp:54`
+`src/Mesh.cpp:73`
 
 `size()` возвращает беззнаковый `size_t`, а `p_id` — обычный `int`. `static_cast<int>(...)`
 явно приводит размер к `int`, чтобы сравнивать числа одного типа. Это безопасная замена
@@ -573,7 +577,7 @@ message << "node " << p_id << " does not exist";
 throw BadIdException(message.str());
 ```
 
-`src/Mesh.cpp:56`
+`src/Mesh.cpp:75`
 
 `std::ostringstream` (из `<sstream>`) — поток, который пишет не на экран, а в строку.
 Удобно собрать текст из чисел и строк так же, как через `cout`. Метод `.str()` возвращает
@@ -602,7 +606,7 @@ throw BadIdException(message.str());
 
 `const_iterator` — итератор только для чтения. В константном методе `begin()` у поля
 возвращает именно `const_iterator`, поэтому переменная объявлена с этим типом
-(`src/Mesh.cpp:73`).
+(`src/Mesh.cpp:97`).
 
 ### 4.6. `std::find`
 
@@ -612,7 +616,7 @@ return std::find(nodes.begin(), nodes.end(), m_id1) != nodes.end()
     && std::find(nodes.begin(), nodes.end(), m_id3) != nodes.end();
 ```
 
-`src/Mesh.cpp:15`
+`src/Mesh.cpp:18`
 
 `std::find` (из `<algorithm>`) ищет значение в диапазоне. Возвращает итератор на найденный
 элемент, а если ничего не нашёл — `end()`. Поэтому `!= nodes.end()` читается как «найдено».
@@ -636,7 +640,7 @@ while ((it = std::find_if(it, m_elements.end(), predicate)) != m_elements.end())
 }
 ```
 
-`src/Mesh.cpp:69`
+`src/Mesh.cpp:93`
 
 `std::find_if` — как `find`, только вместо значения принимает предикат. Возвращает первый
 элемент, для которого `predicate(элемент)` вернул `true`.
@@ -664,7 +668,7 @@ std::for_each(m_elements.begin(), m_elements.end(),
     });
 ```
 
-`src/Mesh.cpp:107`
+`src/Mesh.cpp:138`
 
 `std::for_each` вызывает переданную функцию для каждого элемента диапазона. По сути это тот же
 цикл `for`, но через алгоритм STL — задание требовало свести циклы к минимуму.
@@ -687,7 +691,7 @@ std::for_each(m_elements.begin(), m_elements.end(),
 | Захват | Что значит | Где в лабе |
 | --- | --- | --- |
 | `[&]` | все внешние переменные по ссылке: лямбда может их читать и менять, изменения видны снаружи | почти везде: лямбда читает `p_regionId` и добавляет в `result` |
-| `[]` | ничего не захватывать | `src/Mesh.cpp:199`: лямбде нужен только её параметр |
+| `[]` | ничего не захватывать | `src/Mesh.cpp:249`: лямбде нужен только её параметр |
 | `[=]` | копии всех внешних переменных | в лабе не используется |
 
 `[&]` захватывает и `this`, поэтому внутри лямбды доступны поля и методы класса.
@@ -705,7 +709,7 @@ auto processElement = [&](const FiniteElement& p_element, int p_vertexCount)
 };
 ```
 
-`src/Mesh.cpp:168`
+`src/Mesh.cpp:218`
 
 У лямбды есть тип, но у него нет имени — его придумывает компилятор. Записать такой тип
 вручную невозможно, поэтому пишем `auto`: «выведи тип переменной сам из того, чем
@@ -724,7 +728,7 @@ std::set<int> nodes;
 nodes.insert(p_element.nodeIds.begin(), p_element.nodeIds.end());
 ```
 
-`src/Mesh.cpp:135`
+`src/Mesh.cpp:173`
 
 `std::set` — множество: хранит только уникальные значения, всегда в отсортированном порядке.
 Повторная вставка того же значения ничего не делает. Один узел принадлежит нескольким
@@ -732,7 +736,7 @@ nodes.insert(p_element.nodeIds.begin(), p_element.nodeIds.end());
 
 `insert(начало, конец)` вставляет сразу весь диапазон.
 
-`std::vector<std::set<int> > neighbours(m_nodes.size());` (`src/Mesh.cpp:165`) — вектор
+`std::vector<std::set<int> > neighbours(m_nodes.size());` (`src/Mesh.cpp:215`) — вектор
 из N пустых множеств, по одному на каждый узел.
 
 ### 4.12. Вектор из диапазона
@@ -741,7 +745,7 @@ nodes.insert(p_element.nodeIds.begin(), p_element.nodeIds.end());
 return std::vector<int>(nodes.begin(), nodes.end());
 ```
 
-`src/Mesh.cpp:144`
+`src/Mesh.cpp:182`
 
 Конструктор `vector`, который копирует элементы из диапазона итераторов. Так множество
 превращается в вектор. Элементы уже отсортированы, потому что пришли из `set`.
@@ -758,7 +762,7 @@ std::transform(neighbours.begin(), neighbours.end(), result.begin(),
     });
 ```
 
-`src/Mesh.cpp:196`
+`src/Mesh.cpp:246`
 
 `transform` для каждого элемента входного диапазона вызывает функцию и записывает её результат
 в выходной диапазон, начиная с `result.begin()`. Здесь каждое множество превращается в вектор.
@@ -774,7 +778,7 @@ for (int i = 0; i < p_vertexCount; ++i)
         edges.push_back(std::make_pair(i, j));
 ```
 
-`src/Mesh.cpp:155`
+`src/Mesh.cpp:197`
 
 Два вложенных цикла перебирают все пары `i < j`. Для четырёх вершин получается
 `(0,1) (0,2) (0,3) (1,2) (1,3) (2,3)` — 6 рёбер тетраэдра, для трёх — 3 ребра треугольника.
@@ -785,7 +789,7 @@ std::pair<int, int> key = std::make_pair(std::min(first, second),
                                          std::max(first, second));
 ```
 
-`src/Mesh.cpp:226`
+`src/Mesh.cpp:285`
 
 `std::min` и `std::max` (из `<algorithm>`) — меньшее и большее из двух чисел. Ключ ребра всегда
 записывается как «меньший номер, больший номер». Тогда ребро 13–14 одного тетраэдра и ребро
@@ -805,7 +809,7 @@ if (found == p_createdNodes.end())
 p_element.nodeIds.push_back(found->second);
 ```
 
-`src/Mesh.cpp:229`
+`src/Mesh.cpp:288`
 
 - `map::find(key)` возвращает итератор на найденную запись или `end()`, если ключа нет.
 - Каждая запись в `map` — это `pair`: `found->first` — ключ (ребро),
@@ -824,7 +828,7 @@ void Mesh::addMiddleNodes(std::vector<FiniteElement>& p_elements, ...)
     [&](FiniteElement& p_element)
 ```
 
-`src/Mesh.cpp:209`, `src/Mesh.cpp:216`
+`src/Mesh.cpp:268`, `src/Mesh.cpp:275`
 
 Здесь нет `const`, потому что мы меняем элементы — дописываем узлы в `nodeIds`. Если бы лямбда
 принимала элемент по значению (`FiniteElement p_element`), изменения попали бы в копию,
@@ -839,7 +843,7 @@ Node b = getNode(second);
 m_nodes.push_back(Node(newId, ...));
 ```
 
-`src/Mesh.cpp:237`
+`src/Mesh.cpp:296`
 
 `getNode` возвращает ссылку на элемент внутри `m_nodes`. Но `push_back` может не уместиться
 в уже выделенной памяти. Тогда `vector` выделяет новый кусок памяти, переносит туда все
@@ -858,7 +862,7 @@ void Mesh::printNode(std::ostream& p_out, const Node& p_node) const
 }
 ```
 
-`src/Mesh.cpp:270`
+`src/Mesh.cpp:337`
 
 `p_out << p_node` работает благодаря `operator<<` из `MeshTypes.h` (см. 1.9).
 
@@ -910,7 +914,7 @@ delete loader;
 virtual ~MeshLoader() {}
 ```
 
-`src/MeshLoader.h:16`
+`src/MeshLoader.h:20`
 
 В примере выше `delete loader` удаляет объект через указатель на базовый класс.
 Без `virtual` у деструктора вызвался бы только деструктор `MeshLoader`, а деструктор
@@ -926,7 +930,7 @@ public:
     Mesh loadMesh(const std::string& p_fileName) override;
 ```
 
-`src/MeshLoader.h:27`
+`src/MeshLoader.h:40`
 
 `override` говорит: «этот метод переопределяет виртуальный метод базового класса».
 Компилятор это проверит. Если ошибиться в объявлении (например, написать `std::string`
@@ -940,7 +944,7 @@ void readHeader(std::ifstream& p_file, int& o_count, int& o_size,
                 const std::string& p_blockName);
 ```
 
-`src/MeshLoader.h:32`
+`src/MeshLoader.h:49`
 
 Функция должна вернуть два числа сразу — через `return` это неудобно. Поэтому переменные
 передаются по ссылке, и функция записывает результат прямо в них. После вызова
@@ -963,7 +967,7 @@ if (!file.is_open())
     throw FileOpenException(p_fileName);
 ```
 
-`src/MeshLoader.cpp:65`
+`src/MeshLoader.cpp:82`
 
 `std::ifstream` (из `<fstream>`) — поток для чтения из файла. Файл открывается прямо
 в конструкторе, `is_open()` сообщает, получилось ли.
@@ -980,7 +984,7 @@ if (!file.is_open())
 file >> x >> y >> z;
 ```
 
-`src/MeshLoader.cpp:87`
+`src/MeshLoader.cpp:104`
 
 Читает три числа подряд, пропуская пробелы и переводы строк. Поэтому неважно, как числа
 разбиты по строкам в файле — важен только порядок. Тип переменной определяет, как разбирается
@@ -996,7 +1000,7 @@ if (!file)
 }
 ```
 
-`src/MeshLoader.cpp:89`
+`src/MeshLoader.cpp:106`
 
 Если чтение не удалось (в файле буквы вместо числа или файл закончился раньше времени),
 поток переходит в состояние ошибки, и все следующие чтения ничего не делают.
@@ -1007,7 +1011,7 @@ if (!file)
 if (p_file && (nodeIds[j] < 1 || nodeIds[j] > p_nodesInMesh))
 ```
 
-`src/MeshLoader.cpp:39`
+`src/MeshLoader.cpp:48`
 
 Номер узла проверяется на допустимость, только если число действительно прочиталось
 (`p_file` в порядке). Иначе в переменной мусор, и сообщение об ошибке было бы неверным.
@@ -1016,8 +1020,8 @@ if (p_file && (nodeIds[j] < 1 || nodeIds[j] > p_nodesInMesh))
 ### 6.4. `reserve(n)` и `vector(n)`
 
 ```cpp
-nodes.reserve(nodesCount);                         // src/MeshLoader.cpp:79
-std::vector<int> nodeIds(p_nodesInElement);        // src/MeshLoader.cpp:32
+nodes.reserve(nodesCount);                         // src/MeshLoader.cpp:96
+std::vector<int> nodeIds(p_nodesInElement);        // src/MeshLoader.cpp:41
 ```
 
 | Запись | Размер после | Зачем |
@@ -1033,7 +1037,7 @@ std::vector<int> nodeIds(p_nodesInElement);        // src/MeshLoader.cpp:32
 return Mesh(nodes, elements, boundaryElements);
 ```
 
-`src/MeshLoader.cpp:123`
+`src/MeshLoader.cpp:140`
 
 `loadMesh` возвращает `Mesh` по значению — так требует задание. Лишнего копирования объекта
 при возврате нет: компилятор сразу создаёт его в переменной `mesh` в `main`. Эта оптимизация
@@ -1059,7 +1063,7 @@ int main(int argc, char* argv[])
     }
 ```
 
-`src/main.cpp:20`
+`src/main.cpp:27`
 
 - `argc` — сколько слов в командной строке, включая имя самой программы;
 - `argv` — массив этих слов в виде строк.
@@ -1108,7 +1112,7 @@ catch (const std::exception& e)
 }
 ```
 
-`src/main.cpp:28`, `src/main.cpp:95`
+`src/main.cpp:35`, `src/main.cpp:102`
 
 Если где-то внутри `try` — даже глубоко, в `loadMesh` → `readElements` — выполнился `throw`,
 остаток блока `try` пропускается и выполняется первый подходящий `catch`.
@@ -1139,10 +1143,10 @@ catch (const std::exception& e)
 const FiniteElement& first = mesh.getElements().front();
 ```
 
-`src/main.cpp:46`
+`src/main.cpp:53`
 
 `front()` — первый элемент контейнера, `back()` — последний. Берём ссылку, чтобы не копировать
-элемент. `empty()` (`src/main.cpp:10`) — пуст ли контейнер; это понятнее, чем `size() == 0`.
+элемент. `empty()` (`src/main.cpp:12`) — пуст ли контейнер; это понятнее, чем `size() == 0`.
 
 ### 7.6. Обычная функция `printIds`
 
@@ -1158,7 +1162,7 @@ void printIds(const std::vector<int>& p_ids)
 }
 ```
 
-`src/main.cpp:8`
+`src/main.cpp:10`
 
 Свободная функция — не метод какого-либо класса. `return;` без значения внутри
 `void`-функции означает досрочный выход из неё.
@@ -1222,41 +1226,41 @@ $(TARGET): $(OBJECTS)
 | --- | --- | --- | --- |
 | `#ifndef` / `#define` / `#endif` | `MeshTypes.h:1` | 1.1 | 2 |
 | `struct` | `MeshTypes.h:9` | 1.3 | 2 |
-| Конструктор, список инициализации | `MeshTypes.h:22` | 1.4 | 2 |
-| Конструктор по умолчанию | `MeshTypes.h:18` | 1.5 | 2 |
-| Параметр по умолчанию | `MeshTypes.h:22` | 1.6 | 2 |
-| `std::vector<T>` — шаблон класса | `MeshTypes.h:32` | 1.7 | 6 |
-| Передача по `const &` | `MeshTypes.h:38` | 1.8 | 2 |
-| Перегрузка `operator<<` | `MeshTypes.h:45` | 1.9 | 2 |
-| `inline` | `MeshTypes.h:45` | 1.10 | 2 |
-| `setw`, `fixed`, `setprecision` | `MeshTypes.h:47` | 1.11 | — |
-| Тернарный оператор `? :` | `MeshTypes.h:52` | 1.12 | — |
-| `++i` и `i++` | `MeshTypes.h:63` | 1.13 | 2 |
+| Конструктор, список инициализации | `MeshTypes.h:29` | 1.4 | 2 |
+| Конструктор по умолчанию | `MeshTypes.h:21` | 1.5 | 2 |
+| Параметр по умолчанию | `MeshTypes.h:29` | 1.6 | 2 |
+| `std::vector<T>` — шаблон класса | `MeshTypes.h:39` | 1.7 | 6 |
+| Передача по `const &` | `MeshTypes.h:51` | 1.8 | 2 |
+| Перегрузка `operator<<` | `MeshTypes.h:63` | 1.9 | 2 |
+| `inline` | `MeshTypes.h:63` | 1.10 | 2 |
+| `setw`, `fixed`, `setprecision` | `MeshTypes.h:65` | 1.11 | — |
+| Тернарный оператор `? :` | `MeshTypes.h:70` | 1.12 | — |
+| `++i` и `i++` | `MeshTypes.h:85` | 1.13 | 2 |
 | Наследование `: public Base` | `MeshExceptions.h:8` | 2.2 | 3 |
-| Вызов конструктора базового класса | `MeshExceptions.h:12` | 2.3 | 3 |
-| `explicit` | `MeshExceptions.h:11` | 2.4 | 2, 4 |
+| Вызов конструктора базового класса | `MeshExceptions.h:15` | 2.3 | 3 |
+| `explicit` | `MeshExceptions.h:14` | 2.4 | 2, 4 |
 | Своя иерархия исключений | `MeshExceptions.h` | 2.2 | 5 |
-| `public:` / `private:`, инкапсуляция | `Mesh.h:32`, `Mesh.h:72` | 3.2 | 1, 2 |
+| `public:` / `private:`, инкапсуляция | `Mesh.h:39`, `Mesh.h:122` | 3.2 | 1, 2 |
 | Функтор, предикат, `operator()` | `Mesh.h:13` | 3.3 | 2, 6, 7 |
-| `const`-метод | `Mesh.h:39` | 3.4 | 2 |
-| `static`-метод | `Mesh.h:78` | 3.8 | 2 |
-| `static const`-константа | `Mesh.h:74` | 3.9 | 2 |
-| `std::pair`, `make_pair`, `.first` / `.second` | `Mesh.h:78`, `Mesh.cpp:157` | 3.7, 4.14 | 9 |
-| `std::map`, `std::set` | `Mesh.h:85`, `Mesh.cpp:135` | 3.7, 4.11 | — |
-| `Класс::метод` | `Mesh.cpp:35` | 4.1 | 2 |
-| `static_cast<T>` | `Mesh.cpp:54` | 4.3 | 4 |
-| `throw` | `Mesh.cpp:58` | 4.4 | 5 |
-| `std::ostringstream` | `Mesh.cpp:56` | 4.4 | — |
-| Итераторы, `begin()` / `end()`, `const_iterator` | `Mesh.cpp:73` | 4.5 | 6 |
-| `std::find`, `std::find_if` | `Mesh.cpp:15`, `Mesh.cpp:75` | 4.6, 4.7 | 6 |
-| `std::for_each` | `Mesh.cpp:107` | 4.8 | 7 |
-| `std::transform` | `Mesh.cpp:198` | 4.13 | — |
-| Лямбда, захват `[&]` и `[]` | `Mesh.cpp:108`, `Mesh.cpp:199` | 4.8, 4.9 | 7 |
-| `auto` | `Mesh.cpp:168` | 4.10 | 7 |
-| `virtual`, `= 0`, абстрактный класс | `MeshLoader.h:20` | 5.1 | 3 |
-| Виртуальный деструктор | `MeshLoader.h:16` | 5.2 | 3 |
-| `override` | `MeshLoader.h:27` | 5.3 | 7 |
-| `std::ifstream`, `>>`, `if (!file)` | `MeshLoader.cpp:65` | 6.1–6.3 | 5 (пример с `ifstream`) |
-| Возврат объекта по значению, copy elision | `MeshLoader.cpp:123` | 6.5 | 2 |
-| `argc` / `argv` | `main.cpp:20` | 7.1 | — |
-| `try` / `catch`, порядок `catch`, `what()` | `main.cpp:28`, `main.cpp:95` | 7.3, 7.4 | 5 |
+| `const`-метод | `Mesh.h:54` | 3.4 | 2 |
+| `static`-метод | `Mesh.h:133` | 3.8 | 2 |
+| `static const`-константа | `Mesh.h:124` | 3.9 | 2 |
+| `std::pair`, `make_pair`, `.first` / `.second` | `Mesh.h:133`, `Mesh.cpp:199` | 3.7, 4.14 | 9 |
+| `std::map`, `std::set` | `Mesh.h:142`, `Mesh.cpp:173` | 3.7, 4.11 | — |
+| `Класс::метод` | `Mesh.cpp:46` | 4.1 | 2 |
+| `static_cast<T>` | `Mesh.cpp:73` | 4.3 | 4 |
+| `throw` | `Mesh.cpp:77` | 4.4 | 5 |
+| `std::ostringstream` | `Mesh.cpp:75` | 4.4 | — |
+| Итераторы, `begin()` / `end()`, `const_iterator` | `Mesh.cpp:97` | 4.5 | 6 |
+| `std::find`, `std::find_if` | `Mesh.cpp:18`, `Mesh.cpp:99` | 4.6, 4.7 | 6 |
+| `std::for_each` | `Mesh.cpp:138` | 4.8 | 7 |
+| `std::transform` | `Mesh.cpp:248` | 4.13 | — |
+| Лямбда, захват `[&]` и `[]` | `Mesh.cpp:139`, `Mesh.cpp:249` | 4.8, 4.9 | 7 |
+| `auto` | `Mesh.cpp:218` | 4.10 | 7 |
+| `virtual`, `= 0`, абстрактный класс | `MeshLoader.h:28` | 5.1 | 3 |
+| Виртуальный деструктор | `MeshLoader.h:20` | 5.2 | 3 |
+| `override` | `MeshLoader.h:40` | 5.3 | 7 |
+| `std::ifstream`, `>>`, `if (!file)` | `MeshLoader.cpp:82` | 6.1–6.3 | 5 (пример с `ifstream`) |
+| Возврат объекта по значению, copy elision | `MeshLoader.cpp:140` | 6.5 | 2 |
+| `argc` / `argv` | `main.cpp:27` | 7.1 | — |
+| `try` / `catch`, порядок `catch`, `what()` | `main.cpp:35`, `main.cpp:102` | 7.3, 7.4 | 5 |
