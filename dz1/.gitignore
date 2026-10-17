@@ -1,0 +1,9 @@
+*.o
+homework1
+homework1.exe
+input.txt
+output.txt
+output_transform.txt
+*.bin
+*.tmp
+report.txt
